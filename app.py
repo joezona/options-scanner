@@ -19,8 +19,8 @@ risk_level = st.sidebar.radio("⚖️ Risk Level", ["High Probability", "Riskier
 
 if api_key:
     # Fetch options data from Tastytrade API
-    headers = {"Authorization": f"Bearer {api_key}"}
-    url = f"{BASE_URL}/v1/markets/options/{symbol}/chains"
+    headers = {"Authorization": api_key}
+    url = f"{BASE_URL}/option-chains/{symbol}"
     response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
@@ -29,7 +29,11 @@ if api_key:
         
         if options:
             df = pd.DataFrame(options)
-            
+
+            # * START MODIFYING BELOW *
+            print(df) # This will show the actual data that's available - check the terminal output to view it
+            print(df.columns) # These are the actual available fiels
+
             # Filtering logic (High probability: 16-30 Delta, Riskier: <16 or >30 Delta)
             if risk_level == "High Probability":
                 df = df[(df['delta'] >= -0.30) & (df['delta'] <= 0.30)]
